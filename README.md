@@ -8,6 +8,15 @@ O objetivo geral é permitir que o usuário organize seu guarda-roupa de forma d
 
 O público-alvo são pessoas que desejam organizar suas roupas e ter um controle básico sobre peças que desejam vender ou trocar.
 ---
+
+## 👥 Equipe
+
+- Adriano Moura
+- Gabrielly Gonçalves  
+- Luna Campolina
+- Victor Eduardo
+
+---
 ## 🚀 Versão Inicial
 
 Versão 1.0

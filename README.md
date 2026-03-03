@@ -8,6 +8,19 @@ O objetivo geral é permitir que o usuário organize seu guarda-roupa de forma d
 
 O público-alvo são pessoas que desejam organizar suas roupas e ter um controle básico sobre peças que desejam vender ou trocar.
 ---
+## 🚀 Versão Inicial
+
+Versão 1.0
+
+Funcionalidades previstas:
+
+- Cadastro de usuários  
+- Cadastro e listagem de roupas por usuário  
+- Criação de pedidos de roupas entre usuários  
+- Registro de pagamento associado ao pedido  
+- Controle de entrega relacionada ao pedido  
+
+---
 
 ## 📊 Modelo de Dados
 
@@ -15,19 +28,54 @@ O público-alvo são pessoas que desejam organizar suas roupas e ter um controle
 erDiagram
 
     USUARIO {
-        int id
-        string nome
-        string email
-        string senha
+        int usua_id PK
+        string usua_nome
+        string usua_email
+        string usua_senha
+        datetime usua_data_cadastro
     }
 
     ROUPA {
-        int id
-        string nome
-        string categoria
-        string tamanho
-        boolean disponivel
-        int usuario_id
+        int roup_id PK
+        int roup_usua_id FK
+        string roup_nome
+        string roup_categoria
+        string roup_tamanho
+        decimal roup_preco
+        boolean roup_disponivel
     }
 
-    USUARIO ||--o{ ROUPA : possui
+    PEDIDO {
+        int pedi_id PK
+        int pedi_comprador_id FK "Usuário que faz o pedido"
+        int pedi_roupa_id FK
+        datetime pedi_data_criacao
+        enum pedi_status "pendente | confirmado | cancelado | pago | enviado | concluido"
+        decimal pedi_valor_total
+    }
+
+    PAGAMENTO {
+        int paga_id PK
+        int paga_pedi_id FK
+        enum paga_status "pendente | confirmado | falhou"
+        decimal paga_valor_total
+        datetime paga_data_pagamento
+        enum paga_metodo "cartao | pix | boleto"
+    }
+
+    ENTREGA {
+        int entr_id PK
+        int entr_pedi_id FK
+        enum entr_tipo_entrega "propria | terceirizada"
+        enum entr_status_entrega "pendente | em_rota | entregue"
+        datetime entr_data_envio
+        datetime entr_data_entrega
+        boolean entr_rota_calculada
+        string entr_nota "Criar somente quando PAGAMENTO.paga_status = confirmado"
+    }
+
+    USUARIO ||--o{ ROUPA : oferece
+    USUARIO ||--o{ PEDIDO : realiza
+    ROUPA ||--o{ PEDIDO : é_solicitada
+    PEDIDO ||--|{ PAGAMENTO : gera
+    PEDIDO ||--o{ ENTREGA : tem

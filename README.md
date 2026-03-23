@@ -1,37 +1,40 @@
-# Bd_Roupa
+# 👗 Bd_Roupa - Sistema de Gestão e Troca de Roupas
+
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Fase%201%20Conclu%C3%ADda-success?style=for-the-badge)
 
 ## 📌 Apresentação do Projeto
 
-O Bd_Roupa é um sistema simples para cadastro e organização de roupas, onde o usuário pode registrar suas peças, visualizar sua lista de itens e marcar quais deseja disponibilizar para venda ou troca.
+O **Bd_Roupa** é um sistema projetado para o cadastro, organização e circulação de roupas. O ambiente permite que o usuário registre suas peças, visualize seu inventário digital e marque quais itens deseja disponibilizar para venda ou troca com outros usuários.
 
-O objetivo geral é permitir que o usuário organize seu guarda-roupa de forma digital e pratique o reaproveitamento de roupas de maneira simples e prática.
-
-O público-alvo são pessoas que desejam organizar suas roupas e ter um controle básico sobre peças que desejam vender ou trocar.
----
-
-## 👥 Equipe
-
-- Adriano Moura
-- Gabrielly Gonçalves  
-- Luna Campolina
-- Victor Eduardo
-
----
-## 🚀 Versão Inicial
-
-Versão 1.0
-
-Funcionalidades previstas:
-
-- Cadastro de usuários  
-- Cadastro e listagem de roupas por usuário  
-- Criação de pedidos de roupas entre usuários  
-- Registro de pagamento associado ao pedido  
-- Controle de entrega relacionada ao pedido  
+* **Tema Base:** Rede Social de Moda / E-commerce C2C.
+* **Objetivo Geral:** Permitir que o usuário organize seu guarda-roupa de forma digital, facilitando o controle de peças e incentivando a moda circular e o reaproveitamento através de vendas e trocas de maneira simples e prática.
+* **Público-Alvo:** Pessoas interessadas em organizar seu vestuário, praticar o desapego consciente e que desejam ter um controle básico sobre peças que querem vender ou trocar com outras pessoas.
 
 ---
 
-## 📊 Modelo de Dados
+## 👥 Equipe de Desenvolvimento
+
+* Adriano Moura
+* Gabrielly Gonçalves  
+* Luna Campolina
+* Victor Eduardo
+
+---
+
+## 🚀 Versão Inicial (v1.0) - Funcionalidades
+
+- [x] Cadastro e autenticação de usuários.
+- [x] Cadastro e listagem de roupas vinculadas a cada usuário.
+- [x] Criação de pedidos de roupas entre usuários (compra/troca).
+- [x] Registro de pagamento associado ao pedido.
+- [x] Controle de entrega e status logístico relacionado ao pedido.
+
+---
+
+## 📊 Modelo de Dados (Diagrama ER)
+
+Abaixo está a representação do modelo de dados relacional construído para o sistema:
 
 ```mermaid
 erDiagram
@@ -83,8 +86,8 @@ erDiagram
         string entr_nota "Criar somente quando PAGAMENTO.paga_status = confirmado"
     }
 
-    USUARIO ||--o{ ROUPA : oferece
-    USUARIO ||--o{ PEDIDO : realiza
-    ROUPA ||--o{ PEDIDO : é_solicitada
-    PEDIDO ||--|{ PAGAMENTO : gera
-    PEDIDO ||--o{ ENTREGA : tem
+    USUARIO ||--o{ ROUPA : "oferece"
+    USUARIO ||--o{ PEDIDO : "realiza"
+    ROUPA ||--o{ PEDIDO : "é solicitada em"
+    PEDIDO ||--|{ PAGAMENTO : "gera"
+    PEDIDO ||--o{ ENTREGA : "tem"

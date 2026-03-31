@@ -22,13 +22,15 @@ O **Bd_Roupa** é um sistema projetado para o cadastro, organização e circula�
 
 ---
 
-## 🚀 Versão Inicial (v1.0) - Funcionalidades
+## 🚀 Versão Inicial (v1.1) - Funcionalidades
 
 - [x] Cadastro e autenticação de usuários.
 - [x] Cadastro e listagem de roupas vinculadas a cada usuário.
 - [x] Criação de pedidos de roupas entre usuários (compra/troca).
 - [x] Registro de pagamento associado ao pedido.
 - [x] Controle de entrega e status logístico relacionado ao pedido.
+- [x] Gamificação em quiz implementada.
+- [x] Protótipo de front-end iniciado. Link: https://stylequest.netlify.app/
 
 ---
 
@@ -38,12 +40,17 @@ Abaixo está a representação do modelo de dados relacional construído para o 
 
 ```mermaid
 erDiagram
-
     USUARIO {
         int usua_id PK
         string usua_nome
         string usua_email
         string usua_senha
+        string usua_telefone
+        string usua_bio
+        string usua_avatar_url
+        int usua_xp
+        int usua_nivel
+        int usua_confianca_percent
         datetime usua_data_cadastro
     }
 
@@ -51,19 +58,42 @@ erDiagram
         int roup_id PK
         int roup_usua_id FK
         string roup_nome
+        string roup_descricao
         string roup_categoria
         string roup_tamanho
-        decimal roup_preco
+        string roup_tempo_uso
+        string roup_estado_conservacao
+        decimal roup_preco "NULL se for apenas troca"
+        enum roup_objetivo "venda | troca | ambos"
+        string roup_imagem_url
         boolean roup_disponivel
     }
 
-    PEDIDO {
+    PEDIDO_VENDA {
         int pedi_id PK
-        int pedi_comprador_id FK "Usuário que faz o pedido"
+        int pedi_comprador_id FK
         int pedi_roupa_id FK
         datetime pedi_data_criacao
-        enum pedi_status "pendente | confirmado | cancelado | pago | enviado | concluido"
+        enum pedi_status "pendente | pago | enviado | concluido | cancelado"
         decimal pedi_valor_total
+    }
+
+    PROPOSTA_TROCA {
+        int troc_id PK
+        int troc_solicitante_id FK
+        int troc_proprietario_id FK
+        int troc_item_ofertado_id FK
+        int troc_item_solicitado_id FK
+        datetime troc_data_criacao
+        enum troc_status "pendente | aceita | recusada | finalizada"
+    }
+
+    CHAT_MENSAGEM {
+        int mens_id PK
+        int mens_troc_id FK
+        int mens_remetente_id FK
+        string mens_texto
+        datetime mens_data_envio
     }
 
     PAGAMENTO {
@@ -77,17 +107,20 @@ erDiagram
 
     ENTREGA {
         int entr_id PK
-        int entr_pedi_id FK
-        enum entr_tipo_entrega "propria | terceirizada"
-        enum entr_status_entrega "pendente | em_rota | entregue"
+        int entr_pedi_id FK "Relaciona com Venda"
+        int entr_troc_id FK "Relaciona com Troca"
+        enum entr_tipo "propria | terceirizada"
+        enum entr_status "pendente | em_rota | entregue"
         datetime entr_data_envio
-        datetime entr_data_entrega
-        boolean entr_rota_calculada
-        string entr_nota "Criar somente quando PAGAMENTO.paga_status = confirmado"
+        string entr_rastreio
     }
 
-    USUARIO ||--o{ ROUPA : "oferece"
-    USUARIO ||--o{ PEDIDO : "realiza"
-    ROUPA ||--o{ PEDIDO : "é solicitada em"
-    PEDIDO ||--|{ PAGAMENTO : "gera"
-    PEDIDO ||--o{ ENTREGA : "tem"
+    USUARIO ||--o{ ROUPA : "cadastra"
+    USUARIO ||--o{ PEDIDO_VENDA : "compra"
+    USUARIO ||--o{ PROPOSTA_TROCA : "solicita ou recebe"
+    ROUPA ||--o{ PEDIDO_VENDA : "eh vendida em"
+    ROUPA ||--o{ PROPOSTA_TROCA : "faz parte de"
+    PROPOSTA_TROCA ||--o{ CHAT_MENSAGEM : "possui"
+    PEDIDO_VENDA ||--|| PAGAMENTO : "gera"
+    PEDIDO_VENDA ||--o| ENTREGA : "gera"
+    PROPOSTA_TROCA ||--o| ENTREGA : "gera"

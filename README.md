@@ -45,13 +45,25 @@ erDiagram
         string usua_nome
         string usua_email
         string usua_senha
-        string usua_telefone
         string usua_bio
         string usua_avatar_url
         int usua_xp
-        int usua_nivel
-        int usua_confianca_percent
         datetime usua_data_cadastro
+    }
+
+    USUARIO_TELEFONE {
+        int uste_id PK
+        int uste_usua_id FK
+        string uste_numero
+        string uste_tipo "celular | fixo | whatsapp"
+    }
+
+    USUARIO_CONFIANCA {
+        int conf_id PK
+        int conf_usua_id FK
+        decimal conf_percentual
+        int conf_total_avaliacoes
+        datetime conf_data_atualizacao
     }
 
     ROUPA {
@@ -66,7 +78,6 @@ erDiagram
         decimal roup_preco "NULL se for apenas troca"
         enum roup_objetivo "venda | troca | ambos"
         string roup_imagem_url
-        boolean roup_disponivel
     }
 
     PEDIDO_VENDA {
@@ -81,7 +92,6 @@ erDiagram
     PROPOSTA_TROCA {
         int troc_id PK
         int troc_solicitante_id FK
-        int troc_proprietario_id FK
         int troc_item_ofertado_id FK
         int troc_item_solicitado_id FK
         datetime troc_data_criacao
@@ -100,27 +110,36 @@ erDiagram
         int paga_id PK
         int paga_pedi_id FK
         enum paga_status "pendente | confirmado | falhou"
-        decimal paga_valor_total
         datetime paga_data_pagamento
         enum paga_metodo "cartao | pix | boleto"
     }
 
-    ENTREGA {
-        int entr_id PK
-        int entr_pedi_id FK "Relaciona com Venda"
-        int entr_troc_id FK "Relaciona com Troca"
-        enum entr_tipo "propria | terceirizada"
-        enum entr_status "pendente | em_rota | entregue"
-        datetime entr_data_envio
-        string entr_rastreio
+    ENTREGA_VENDA {
+        int envv_id PK
+        int envv_pedi_id FK
+        enum envv_tipo "propria | terceirizada"
+        enum envv_status "pendente | em_rota | entregue"
+        datetime envv_data_envio
+        string envv_rastreio
     }
 
+    ENTREGA_TROCA {
+        int envt_id PK
+        int envt_troc_id FK
+        enum envt_tipo "propria | terceirizada"
+        enum envt_status "pendente | em_rota | entregue"
+        datetime envt_data_envio
+        string envt_rastreio
+    }
+
+    USUARIO ||--o{ USUARIO_TELEFONE : "possui"
+    USUARIO ||--o| USUARIO_CONFIANCA : "possui"
     USUARIO ||--o{ ROUPA : "cadastra"
     USUARIO ||--o{ PEDIDO_VENDA : "compra"
-    USUARIO ||--o{ PROPOSTA_TROCA : "solicita ou recebe"
+    USUARIO ||--o{ PROPOSTA_TROCA : "solicita"
     ROUPA ||--o{ PEDIDO_VENDA : "eh vendida em"
-    ROUPA ||--o{ PROPOSTA_TROCA : "faz parte de"
+    ROUPA ||--o{ PROPOSTA_TROCA : "item ofertado/solicitado"
     PROPOSTA_TROCA ||--o{ CHAT_MENSAGEM : "possui"
     PEDIDO_VENDA ||--|| PAGAMENTO : "gera"
-    PEDIDO_VENDA ||--o| ENTREGA : "gera"
-    PROPOSTA_TROCA ||--o| ENTREGA : "gera"
+    PEDIDO_VENDA ||--o| ENTREGA_VENDA : "gera"
+    PROPOSTA_TROCA ||--o| ENTREGA_TROCA : "gera"
